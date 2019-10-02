@@ -1,9 +1,5 @@
 class MoviesController < ApplicationController
 
-  def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
-  end
-
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
@@ -12,6 +8,17 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    if params[:title_sort] == "on"
+      @movies = Movie.order(title: :desc).reverse
+      @movie_highlight = "hilite"
+    elsif params[:date_sort] == "on"
+      @movies = Movie.order(release_date: :desc).reverse
+      @date_highlight = "hilite"
+    else
+      @movies = Movie.all
+    end
+
+    @all_ratings = Movie.getRatings()
   end
 
   def new
